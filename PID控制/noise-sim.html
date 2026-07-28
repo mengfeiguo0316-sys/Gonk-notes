@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PID 微分噪声与低通滤波模拟器</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #1e1e1e; 
+            color: #f0f0f0; 
+            padding: 20px; 
+            text-align: center; 
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #2d2d2d; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6); 
+        }
+        h2 { margin-top: 0; color: #61dafb; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        canvas { 
+            background: #121212; 
+            border: 1px solid #444; 
+            border-radius: 6px; 
+            margin-bottom: 25px; 
+            width: 100%; 
+            height: 200px; 
+        }
+        .controls { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin-bottom: 25px; 
+            text-align: left; 
+            background: #333; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 4px solid #61dafb;
+        }
+        .slider-group { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+        }
+        input[type="range"] { width: 65%; cursor: pointer; }
+        label { font-weight: bold; width: 30%; }
+        .val-display { color: #ffeb3b; font-family: monospace; font-size: 1.1em; }
+        .legend { 
+            display: flex; 
+            justify-content: center; 
+            gap: 25px; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+        }
+        .dot { 
+            display: inline-block; 
+            width: 14px; 
+            height: 14px; 
+            border-radius: 50%; 
+            margin-right: 6px; 
+            vertical-align: middle; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>微分噪声 (Derivative Noise) 模拟器</h2>
+
+        <div class="controls">
+            <div class="slider-group">
+                <label>传感器噪声幅度:<br><span style="font-weight:normal; font-size:12px; color:#aaa;">(模拟电磁干扰引起的毛刺)</span></label>
+                <input type="range" id="noiseLevel" min="0" max="15" step="0.5" value="0">
+                <span class="val-display" id="noiseVal">0</span>
+            </div>
+            <div class="slider-group">
+                <label>低通滤波强度:<br><span style="font-weight:normal; font-size:12px; color:#aaa;">(越大滤得越平滑，但有延迟)</span></label>
+                <input type="range" id="filterLevel" min="0" max="0.95" step="0.01" value="0">
+                <span class="val-display" id="filterVal">0.0 (关闭)</span>
+            </div>
+        </div>
+
+        <div class="legend">
+            <span><span class="dot" style="background: #888;"></span>纯净信号 (理想数学模型)</span>
+            <span><span class="dot" style="background: #ff4757;"></span>实际测量 (含噪声+滤波)</span>
+        </div>
+        <canvas id="signalCanvas" width="760" height="200"></canvas>
+
+        <div class="legend">
+            <span><span class="dot" style="background: #2ed573;"></span>微分项输出 (D-Term 灾难现场)</span>
+        </div>
+        <canvas id="derivativeCanvas" width="760" height="200"></canvas>
+    </div>
+
+    <script>
+        const sigCtx = document.getElementById('signalCanvas').getContext('2d');
+        const derCtx = document.getElementById('derivativeCanvas').getContext('2d');
+        const noiseSlider = document.getElementById('noiseLevel');
+        const filterSlider = document.getElementById('filterLevel');
+        const noiseValDisp = document.getElementById('noiseVal');
+        const filterValDisp = document.getElementById('filterVal');
+
+        let time = 0;
+        const bufferSize = 760;
+        
+        // 数据缓存区
+        const pureSignal = new Array(bufferSize).fill(0);
+        const actualSignal = new Array(bufferSize).fill(0);
+        const derivativeSignal = new Array(bufferSize).fill(0);
+
+        let prevFiltered = 0;
+
+        function drawLine(ctx, data, color, yOffset, scale, lineWidth = 2) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            for (let i = 0; i < bufferSize; i++) {
+                const x = i;
+                const y = yOffset - (data[i] * scale);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        function drawGrid(ctx, yCenter) {
+            ctx.clearRect(0, 0, bufferSize, 200);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, yCenter);
+            ctx.lineTo(bufferSize, yCenter);
+            ctx.stroke();
+        }
+
+        function update() {
+            const noiseAmp = parseFloat(noiseSlider.value);
+            const filterAlpha = parseFloat(filterSlider.value);
+
+            noiseValDisp.textContent = noiseAmp.toFixed(1);
+            filterValDisp.textContent = filterAlpha === 0 ? "0.00 (关闭)" : filterAlpha.toFixed(2);
+
+            // 1. 生成基础平滑正弦波 (模拟真实的物理运动，如电机平滑转动)
+            const pure = Math.sin(time * 0.05) * 60; 
+            
+            // 2. 注入高频随机噪声 (模拟编码器读数跳变)
+            const noise = (Math.random() - 0.5) * 2 * noiseAmp;
+            const rawMeasurement = pure + noise;
+
+            // 3. 一阶低通滤波 (核心工程算法)
+            const filteredMeasurement = (1 - filterAlpha) * rawMeasurement + filterAlpha * prevFiltered;
+
+            // 4. 计算微分 (当前时刻的值减去上一时刻的值，即斜率)
+            const derivative = filteredMeasurement - prevFiltered;
+            prevFiltered = filteredMeasurement;
+
+            // 5. 压入数组，剔除旧数据
+            pureSignal.shift(); pureSignal.push(pure);
+            actualSignal.shift(); actualSignal.push(filteredMeasurement);
+            derivativeSignal.shift(); derivativeSignal.push(derivative);
+
+            // 6. 渲染第一张图表 (传感器反馈)
+            drawGrid(sigCtx, 100);
+            drawLine(sigCtx, pureSignal, '#888', 100, 1, 1.5);
+            drawLine(sigCtx, actualSignal, '#ff4757', 100, 1, 2);
+
+            // 7. 渲染第二张图表 (微分放大效应)
+            drawGrid(derCtx, 100);
+            // 故意将微分信号在图表上放大显示，让你直观感受哪怕微小的跳变带来的输出突变
+            drawLine(derCtx, derivativeSignal, '#2ed573', 100, 10, 2); 
+
+            time++;
+            requestAnimationFrame(update);
+        }
+
+        update();
+    </script>
+</body>
+</html>

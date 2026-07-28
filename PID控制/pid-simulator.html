@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PID 控制系统交互模拟器</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --color-p: #2563eb;
+      --color-i: #059669;
+      --color-d: #7c3aed;
+      --color-target: #ef4444;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 800px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #0f172a;
+      color: white;
+      padding: 16px 24px;
+      text-align: center;
+    }
+
+    .header h2 { margin: 0; font-size: 1.25rem; font-weight: 600; letter-spacing: 0.05em; }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 24px;
+    }
+
+    @media (min-width: 768px) {
+      .content { flex-direction: row; }
+      .controls { width: 35%; }
+      .display { width: 65%; }
+    }
+
+    /* 控制面板样式 */
+    .controls { display: flex; flex-direction: column; gap: 20px; }
+    
+    .control-group {
+      background: var(--bg-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .select-group select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 8px;
+      outline: none;
+      background: white;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .val-badge {
+      font-family: monospace;
+      background: rgba(255,255,255,0.8);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    input[type=range] { width: 100%; cursor: pointer; }
+
+    /* 画布样式 */
+    .display { display: flex; flex-direction: column; }
+    
+    .svg-container {
+      position: relative;
+      background: white;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      height: 300px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    svg { width: 100%; height: 100%; }
+
+    .legend {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 12px;
+      font-weight: bold;
+      backdrop-filter: blur(4px);
+    }
+
+    .help-text {
+      margin-top: 16px;
+      padding: 12px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #1e3a8a;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h2>PID 仿真交互模拟器</h2>
+    </div>
+    
+    <div class="content">
+      <div class="controls">
+        <div class="control-group select-group">
+          <label style="font-size: 14px; font-weight: bold;">物理系统类型:</label>
+          <select id="sysType">
+            <option value="1">一阶系统 (水缸/无震荡)</option>
+            <option value="2" selected>二阶系统 (弹簧/极易震荡)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <div class="slider-header" style="color: var(--color-p);">
+            <span>P (比例 - 当前力气)</span>
+            <span id="vp" class="val-badge">3.0</span>
+          </div>
+          <input type="range" id="kp" min="0" max="10" step="0.1" value="3" style="accent-color: var(--color-p);">
+        </div>
+
+        <div class="control-group">
+          <div class="slider-header" style="color: var(--color-i);">
+            <span>I (积分 - 过去累积)</span>
+            <span id="vi" class="val-badge">0.0</span>
+          </div>
+          <input type="range" id="ki" min="0" max="10" step="0.1" value="0" style="accent-color: var(--color-i);">
+        </div>
+
+        <div class="control-group">
+          <div class="slider-header" style="color: var(--color-d);">
+            <span>D (微分 - 未来预判)</span>
+            <span id="vd" class="val-badge">0.0</span>
+          </div>
+          <input type="range" id="kd" min="0" max="10" step="0.1" value="0" style="accent-color: var(--color-d);">
+        </div>
+      </div>
+
+      <div class="display">
+        <div class="svg-container">
+          <svg viewBox="0 0 800 400" preserveAspectRatio="none">
+            <!-- 网格线 -->
+            <line x1="0" y1="350" x2="800" y2="350" stroke="#f1f5f9" stroke-width="2" />
+            <line x1="0" y1="275" x2="800" y2="275" stroke="#f1f5f9" stroke-width="2" />
+            <line x1="0" y1="200" x2="800" y2="200" stroke="#f1f5f9" stroke-width="2" />
+            <line x1="0" y1="125" x2="800" y2="125" stroke="#f1f5f9" stroke-width="2" />
+            <line x1="0" y1="50" x2="800" y2="50" stroke="#f1f5f9" stroke-width="2" />
+            
+            <!-- 目标线 -->
+            <line x1="0" y1="200" x2="800" y2="200" stroke="var(--color-target)" stroke-width="3" stroke-dasharray="8 8" />
+            
+            <!-- 响应曲线 -->
+            <path id="pathLine" fill="none" stroke="var(--color-p)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+
+          <div class="legend">
+            <span style="color: var(--color-target);">● 目标位置 (Target = 1.0)</span>
+            <span id="legendResp" style="color: var(--color-p);">● 实际响应 (Output)</span>
+          </div>
+        </div>
+
+        <div class="help-text" id="helpText">
+          <strong>二阶系统提示：</strong><br>
+          把 P 调大，系统会像弹簧一样上下震荡。此时慢慢增加 D (微分) 的值，观察它是如何像“阻尼器”一样瞬间平息震荡的！
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 获取 DOM 元素
+    const elSys = document.getElementById('sysType');
+    const elKp = document.getElementById('kp');
+    const elKi = document.getElementById('ki');
+    const elKd = document.getElementById('kd');
+    const pathLine = document.getElementById('pathLine');
+    const legendResp = document.getElementById('legendResp');
+    const helpText = document.getElementById('helpText');
+
+    // 核心仿真与绘图函数
+    function updateSimulation() {
+      const sys = elSys.value;
+      const kp = parseFloat(elKp.value);
+      const ki = parseFloat(elKi.value);
+      const kd = parseFloat(elKd.value);
+
+      // 更新数值显示
+      document.getElementById('vp').innerText = kp.toFixed(1);
+      document.getElementById('vi').innerText = ki.toFixed(1);
+      document.getElementById('vd').innerText = kd.toFixed(1);
+
+      // 更新 UI 颜色和提示文本
+      if (sys === '1') {
+        const c = '#3b82f6';
+        pathLine.setAttribute('stroke', c);
+        legendResp.style.color = c;
+        helpText.innerHTML = "<strong>一阶系统提示：</strong><br>它就像给水缸注水。无论 P 调多大，线条都只会平滑上升，永远不会越过红线产生震荡。因此一阶系统通常不需要 D。";
+      } else {
+        const c = '#8b5cf6';
+        pathLine.setAttribute('stroke', c);
+        legendResp.style.color = c;
+        helpText.innerHTML = "<strong>二阶系统提示：</strong><br>把 P 调大，系统会像弹簧一样上下震荡。此时慢慢增加 D (微分) 的值，观察它是如何像“阻尼器”一样瞬间平息震荡的！";
+      }
+
+      // 物理仿真参数
+      const dt = 0.05;
+      const steps = 400; // 模拟 20 秒 (20 / 0.05 = 400)
+      const target = 1.0;
+      
+      let y = 0;          // 当前位置
+      let v = 0;          // 当前速度
+      let integral = 0;   // 积分项
+      let prevError = 0;  // 上一次误差
+      
+      let points = [];
+
+      // 欧拉法数值积分
+      for (let i = 0; i <= steps; i++) {
+        const error = target - y;
+        
+        // PID 计算
+        integral += error * dt;
+        const derivative = (error - prevError) / dt;
+        let u = (kp * error) + (ki * integral) + (kd * derivative);
+        
+        // 限制输出 (防爆计算)
+        u = Math.max(-20, Math.min(20, u));
+
+        // 系统响应
+        if (sys === '1') {
+          // 一阶: dy/dt + y = u
+          const dy = -1.0 * y + u;
+          y += dy * dt;
+        } else {
+          // 二阶: d2y/dt2 + 0.4*dy/dt + y = u
+          const dv = -0.4 * v - 1.0 * y + u;
+          v += dv * dt;
+          y += v * dt;
+        }
+
+        // 映射到 SVG 坐标系
+        // X: 0 -> 800, Y: 0 -> 350 (目标1.0 在 200)
+        const svgX = (i / steps) * 800;
+        const svgY = 350 - (y * 150);
+        
+        points.push((i === 0 ? 'M' : 'L') + svgX.toFixed(1) + ',' + svgY.toFixed(1));
+        
+        prevError = error;
+      }
+
+      // 绘制路径
+      pathLine.setAttribute('d', points.join(' '));
+    }
+
+    // 系统切换时稍微重置一下参数以保证演示效果
+    elSys.addEventListener('change', () => {
+      if(elSys.value === '1') { elKp.value = 5; elKi.value = 0; elKd.value = 0; }
+      else { elKp.value = 3; elKi.value = 0; elKd.value = 0; }
+      updateSimulation();
+    });
+
+    // 绑定事件
+    [elKp, elKi, elKd].forEach(el => el.addEventListener('input', updateSimulation));
+
+    // 初始化运行一次
+    updateSimulation();
+  </script>
+</body>
+</html>

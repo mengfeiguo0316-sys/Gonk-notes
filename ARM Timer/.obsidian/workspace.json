@@ -1,0 +1,216 @@
+{
+  "main": {
+    "id": "3ff84a46bd5cbb92",
+    "type": "split",
+    "children": [
+      {
+        "id": "2fcd7889e7dcc110",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a75b6f95f2c14271",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "通用定时器/概念.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "概念"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "bb79e3eae77353d9",
+    "type": "split",
+    "children": [
+      {
+        "id": "15a7416e81ea98e0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e7c4442d25114fd6",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "byModifiedTime",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "274410479d591456",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "bc24a376abd7c1e2",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "9352fc83ce31047c",
+    "type": "split",
+    "children": [
+      {
+        "id": "f675a296e399b397",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9f07354f1d3c6090",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "反向链接"
+            }
+          },
+          {
+            "id": "871d9af633dc472c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "欢迎.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "欢迎 的出链列表"
+            }
+          },
+          {
+            "id": "a5a1cc2d584e5abf",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "b7ae896d278ed76b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "7ca64209cda4a668",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "欢迎.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "欢迎 的大纲"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "a75b6f95f2c14271",
+  "lastOpenFiles": [
+    "ARM Timer/定时器介绍.md",
+    "通用定时器/概念.md",
+    "基本定时器/时基单元构成：.md",
+    "Pasted image 20260612180900.png",
+    "未命名",
+    "Pasted image 20260613155727.png",
+    "Pasted image 20260613155301.png",
+    "Pasted image 20260612182638.png",
+    "Pasted image 20260612182531.png",
+    "Pasted image 20260612182432.png",
+    "Pasted image 20260610205305.png",
+    "Pasted image 20260610205133.png",
+    "Pasted image 20260610204913.png",
+    "Pasted image 20260610202827.png",
+    "未命名.md",
+    "时基单元构成：[[时基单元构成：.md",
+    "未命名.canvas",
+    "ARM Timer",
+    "定时器.md",
+    "高级定时器",
+    "通用定时器",
+    "基本定时器",
+    "未命名.base",
+    "未命名 2.canvas",
+    "未命名 1.canvas",
+    "未命名 3.canvas",
+    "欢迎.md"
+  ]
+}

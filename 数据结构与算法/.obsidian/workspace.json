@@ -1,0 +1,203 @@
+{
+  "main": {
+    "id": "54cc054e6266d833",
+    "type": "split",
+    "children": [
+      {
+        "id": "2bcc1a76f230500e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8dcd2d4b901bcd1f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "目录/顺序表.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "顺序表"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "91d6e7bd47be87ba",
+    "type": "split",
+    "children": [
+      {
+        "id": "9c2bd68eaba6a6f4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7294b2e6f18b8cd2",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "2220f4beb8a534d0",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "d8c38a2849adef8c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d1aeb45681cdad7f",
+    "type": "split",
+    "children": [
+      {
+        "id": "a7a2bbf8cff7b5b2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2a8726a5e7d41aa4",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "二.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "二 的反向链接列表"
+            }
+          },
+          {
+            "id": "f04048ee64f332d4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "二.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "二 的出链列表"
+            }
+          },
+          {
+            "id": "a1d50b920fb7e9e5",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "24c2c0a3ad4e2c30",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "842e0ca541da9253",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "二.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "二 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "8dcd2d4b901bcd1f",
+  "lastOpenFiles": [
+    "目录/一 数据结构与算法基本概念.md",
+    "Pasted image 20260716100210.png",
+    "Pasted image 20260716095958.png",
+    "Pasted image 20260716095934.png",
+    "Pasted image 20260716094755.png",
+    "目录/顺序表.md",
+    "目录",
+    "picture/Pasted image 20260715085300.png",
+    "picture/69d816c51eb52a73e99725443ffe1c11.jpg",
+    "picture",
+    "picture/Pasted image 20260715110748.png",
+    "picture/Pasted image 20260715101708.png",
+    "picture/Pasted image 20260715101639.png",
+    "picture/Pasted image 20260715101420.png"
+  ]
+}
